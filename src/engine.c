@@ -10,12 +10,12 @@ int handle_input();
 void render(int time);
 void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 void precal_sin();
-void renderField(int time);
+void renderPlasma(int time);
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
-static float sin_table[360];
+static int sin_table[360];
 
 int main(int argc, char* argv[])
 {
@@ -24,8 +24,8 @@ int main(int argc, char* argv[])
 
     SDL_Window* window = SDL_CreateWindow(
         "3D software Engine",
-        800,
-        600,
+        1024,
+        768,
         SDL_WINDOW_RESIZABLE
     );
 
@@ -83,7 +83,7 @@ void render(int time)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 	
-	renderField(time);
+	renderPlasma(time);
 	
     SDL_RenderPresent(renderer);
 }
@@ -98,18 +98,20 @@ void precal_sin()
 {
 	for (int i = 0; i < 360; i++)
     {
-        sin_table[i] = sin(i * (PI / 180.0));
+        
+	    sin_table[i] = (int)(sin(i * (PI / 180.0)) * 256.0);
     }
 } 
 
-void renderField(int time)
+void renderPlasma(int time)
 {
-	for (int x = 0; x < 800; x++)
+	for (int x = 0; x < 1024; x++)
     {
-        for (int y = 0; y < 600; y++)
+        for (int y = 0; y < 768; y++)
         {
 			int v = (sin_table[x % 360] + sin_table[y % 360] + sin_table[(x + y + time) % 360]);
-			int c = (int)((v + 3.0f) * 42.5f);
+			v = v + 768; 
+            int c = (v * 255) >> 11;
             put_pixel(x, y, c, 255-c, c/2, 255);
         }
     }

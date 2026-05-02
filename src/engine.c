@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 #define PI 3.14159265358979323846f
+#define WIDTH 1024
+#define HEIGHT 768
 
 void engine();
 int handle_input();
@@ -14,26 +16,38 @@ void renderPlasma(int time);
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+SDL_Texture* texture = NULL;
 
 static int sin_table[360];
+static Uint32 pixels[WIDTH * HEIGHT];
 
 int main(int argc, char* argv[])
 {
     precal_sin();
 	SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_Window* window = SDL_CreateWindow(
+    window = SDL_CreateWindow(
         "3D software Engine",
-        1024,
-        768,
+        WIDTH,
+        HEIGHT,
         SDL_WINDOW_RESIZABLE
     );
 
     renderer = SDL_CreateRenderer(window, NULL);
 	
+	texture = SDL_CreateTexture
+	(
+        renderer,
+        SDL_PIXELFORMAT_RGBA32,
+        SDL_TEXTUREACCESS_STREAMING,
+        WIDTH,
+        HEIGHT
+    );
+	
 	
 	engine();
 
+    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -80,18 +94,18 @@ int handle_input()
 
 void render(int time)
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-	
 	renderPlasma(time);
-	
+
+    SDL_UpdateTexture(texture, NULL, pixels, WIDTH * sizeof(Uint32));
+
+    SDL_RenderClear(renderer);
+    SDL_RenderTexture(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 }
 
 void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
-    SDL_RenderPoint(renderer, x, y);
+    pixels[y * WIDTH + x] = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 void precal_sin()
@@ -105,9 +119,9 @@ void precal_sin()
 
 void renderPlasma(int time)
 {
-	for (int x = 0; x < 1024; x++)
+	for (int x = 0; x < WIDTH; x++)
     {
-        for (int y = 0; y < 768; y++)
+        for (int y = 0; y < HEIGHT; y++)
         {
 			int v = (sin_table[x % 360] + sin_table[y % 360] + sin_table[(x + y + time) % 360]);
 			v = v + 768; 

@@ -2,31 +2,24 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "engine.h"
+#include "fastmath.h"
 
 #define PI 3.14159265358979323846f
 #define WIDTH 1024
 #define HEIGHT 768
 
-void engine_run();
-int handle_input();
-void render(int time);
-static inline void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-void precal_sin();
-void render_plasma(int time);
-void engine_clean_up();
-void engine_init();
-
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+
 SDL_Texture* texture = NULL;
 
-static int sin_table[360];
 static Uint32 pixels[WIDTH * HEIGHT];
 static int fps = 0;
 
 int main(int argc, char* argv[])
 {
-    precal_sin();
+    fastmath_precal_sin();
 	engine_init();
 	engine_run();
 	engine_clean_up();
@@ -128,22 +121,13 @@ static inline void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
     pixels[y * WIDTH + x] = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-void precal_sin()
-{
-	for (int i = 0; i < 360; i++)
-    {
-        
-	    sin_table[i] = (int)(sin(i * (PI / 180.0)) * 256.0);
-    }
-} 
-
 void render_plasma(int time)
 {
 	for (int x = 0; x < WIDTH; x++)
     {
         for (int y = 0; y < HEIGHT; y++)
         {
-			int v = (sin_table[x % 360] + sin_table[y % 360] + sin_table[(x + y + time) % 360]);
+			int v = (fastmath_sin(x % 360) + fastmath_sin(y % 360) + fastmath_sin((x + y + time) % 360));
 			v = v + 768; 
             int c = (v * 255) >> 11;
             put_pixel(x, y, c, 255-c, c/2, 255);

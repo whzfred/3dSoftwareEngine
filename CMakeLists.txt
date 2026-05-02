@@ -11,3 +11,7 @@ PRIVATE
 )
 
 target_link_libraries(engine SDL3::SDL3)
+
+target_compile_options(engine PRIVATE
+    $<$<CONFIG:Release>:-O3 -march=native>
+)

@@ -2,7 +2,7 @@
 
 A software 3D engine implemented in C using SDL.
 
-## Biild
+## Build
 
 ```bash
 cmake -S . -B build

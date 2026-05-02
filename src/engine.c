@@ -1,12 +1,26 @@
 #include <SDL3/SDL.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#define PI 3.14159265358979323846f
 
 void engine();
 int handle_input();
+void render(int time);
+void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+void precal_sin();
+void renderField(int time);
 
+SDL_Window* window = NULL;
+SDL_Renderer* renderer = NULL;
+
+static float sin_table[360];
 
 int main(int argc, char* argv[])
 {
-    SDL_Init(SDL_INIT_VIDEO);
+    precal_sin();
+	SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Window* window = SDL_CreateWindow(
         "3D software Engine",
@@ -15,8 +29,12 @@ int main(int argc, char* argv[])
         SDL_WINDOW_RESIZABLE
     );
 
+    renderer = SDL_CreateRenderer(window, NULL);
+	
+	
 	engine();
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 
@@ -27,10 +45,13 @@ int main(int argc, char* argv[])
 void engine()
 {
 	int running = 1;
+	int time = 0;
 	
 	while (running) 
 	{
 		running = !handle_input();
+		render(time);
+		time++;
 	}
 	return;
 }
@@ -41,7 +62,6 @@ int handle_input()
 	int should_exit = 0;
 	while (SDL_PollEvent(&event)) 
 	{
-
 		if (event.type == SDL_EVENT_QUIT)
 		{
 			should_exit = 1;
@@ -58,3 +78,39 @@ int handle_input()
 	return should_exit;
 }
 
+void render(int time)
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+	
+	renderField(time);
+	
+    SDL_RenderPresent(renderer);
+}
+
+void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    SDL_RenderPoint(renderer, x, y);
+}
+
+void precal_sin()
+{
+	for (int i = 0; i < 360; i++)
+    {
+        sin_table[i] = sin(i * (PI / 180.0));
+    }
+} 
+
+void renderField(int time)
+{
+	for (int x = 0; x < 800; x++)
+    {
+        for (int y = 0; y < 600; y++)
+        {
+			int v = (sin_table[x % 360] + sin_table[y % 360] + sin_table[(x + y + time) % 360]);
+			int c = (int)((v + 3.0f) * 42.5f);
+            put_pixel(x, y, c, 255-c, c/2, 255);
+        }
+    }
+}

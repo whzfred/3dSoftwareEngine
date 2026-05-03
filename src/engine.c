@@ -4,17 +4,16 @@
 #include <stdio.h>
 #include "engine.h"
 #include "fastmath.h"
+#include "render.h"
+#include "config.h"
 
 #define PI 3.14159265358979323846f
-#define WIDTH 1024
-#define HEIGHT 768
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 SDL_Texture* texture = NULL;
 
-static Uint32 pixels[WIDTH * HEIGHT];
 static int fps = 0;
 
 int main(int argc, char* argv[])
@@ -114,11 +113,6 @@ void render(int time)
     SDL_RenderClear(renderer);
     SDL_RenderTexture(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
-}
-
-static inline void put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-    pixels[y * WIDTH + x] = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 void render_plasma(int time)

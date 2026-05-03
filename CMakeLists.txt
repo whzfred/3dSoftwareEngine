@@ -9,6 +9,7 @@ target_sources(engine
 PRIVATE
     src/engine.c
 	src/fastmath.c
+	src/render.c
 )
 
 target_include_directories(engine

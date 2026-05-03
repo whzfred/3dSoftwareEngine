@@ -19,11 +19,11 @@ static int fps = 0;
 
 int main(int argc, char* argv[])
 {
-    fastmath_precal_sin();
+    fastmath_precalc_sin();
 	engine_init();
 	engine_run();
 	engine_clean_up();
-	printf("Average FPS: %d\n", fps);
+	printf("FPS: %d\n", fps);
     return 0;
 }
 

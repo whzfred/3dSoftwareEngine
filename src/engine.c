@@ -7,6 +7,9 @@
 #include "render.h"
 #include "config.h"
 #include "object.h"
+#include "projection.h"
+#include "camera.h"
+#include "rasterizer.h"
 
 #define PI 3.14159265358979323846f
 
@@ -53,21 +56,6 @@ Object cube =
     12
 };
 
-typedef struct
-{
-    float x;
-    float y;
-    float z;
-
-} Camera;
-
-
-Camera camera =
-{
-    0.0f,
-    0.0f,
-    -5.0f
-};
 
 int main(int argc, char* argv[])
 {
@@ -178,7 +166,7 @@ void render_plasma(int time)
 			int v = (fastmath_sin(x % 360) + fastmath_sin(y % 360) + fastmath_sin((x + y + time) % 360));
 			v = v + 768; 
             int c = (v * 255) >> 11;
-            put_pixel(x, y, c, 255-c, c/2, 255);
+            render_put_pixel(x, y, c, 255-c, c/2, 255);
         }
     }
 }
@@ -188,55 +176,6 @@ void render_cube()
 	render_object(&cube);
 }
 
-Vertex camera_transform(Vertex v, Camera* cam)
-{
-    Vertex result;
-    result.x = v.x - cam->x;
-    result.y = v.y - cam->y;
-    result.z = v.z - cam->z;
-    return result;
-}
-
-
-void render_object(Object* obj)
-{
-   for(int i = 0; i < obj->face_count; i++)
-    {
-        Face face = obj->faces[i];
-        Vertex v1 = obj->vertices[face.a];
-        Vertex v2 = obj->vertices[face.b];
-        Vertex v3 = obj->vertices[face.c];
-		
-        // world -> camera
-        v1 = camera_transform(v1,&camera);
-        v2 = camera_transform(v2,&camera);
-        v3 = camera_transform(v3,&camera);
-
-        // behind camera check
-        if(v1.z <= 0 ||
-           v2.z <= 0 ||
-           v3.z <= 0)
-        {
-            continue;
-        }
-
-        float fov = 300.0f;
-
-        int x1 = (int)((v1.x * fov) / v1.z) + WIDTH/2;
-        int y1 = HEIGHT/2 - (int)((v1.y * fov) / v1.z);
-
-        int x2 = (int)((v2.x * fov) / v2.z) + WIDTH/2;
-        int y2 = HEIGHT/2 - (int)((v2.y * fov) / v2.z);
-
-        int x3 = (int)((v3.x * fov) / v3.z) + WIDTH/2;
-        int y3 = HEIGHT/2 - (int)((v3.y * fov) / v3.z);
-
-        put_pixel(x1,y1,255,255,255,255);
-        put_pixel(x2,y2,255,255,255,255);
-        put_pixel(x3,y3,255,255,255,255);
-
-    }
-}
 
 
 

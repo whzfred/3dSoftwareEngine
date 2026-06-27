@@ -10,6 +10,9 @@ PRIVATE
     src/engine.c
 	src/fastmath.c
 	src/render.c
+	src/projection.c
+	src/camera.c
+	src/rasterizer.c
 )
 
 target_include_directories(engine

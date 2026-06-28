@@ -4,6 +4,7 @@
 
 Vertex transform_rotate(Vertex v, int angle_x, int angle_y, int angle_z)
 {
+    // Todo implement fixed point
     Vertex result = v;
 
     const float scale = 1.0f / 256.0f;
@@ -18,7 +19,6 @@ Vertex transform_rotate(Vertex v, int angle_x, int angle_y, int angle_z)
     result.y = y;
     result.z = z;
 
-
     // Y rotation
     float cos_y = fastmath_cos(angle_y % 360) * scale;
     float sin_y = fastmath_sin(angle_y % 360) * scale;
@@ -29,7 +29,6 @@ Vertex transform_rotate(Vertex v, int angle_x, int angle_y, int angle_z)
     result.x = x;
     result.z = z;
 
-
     // Z rotation
     float cos_z = fastmath_cos(angle_z % 360) * scale;
     float sin_z = fastmath_sin(angle_z % 360) * scale;
@@ -39,7 +38,6 @@ Vertex transform_rotate(Vertex v, int angle_x, int angle_y, int angle_z)
 
     result.x = x;
     result.y = y;
-
 
     return result;
 }

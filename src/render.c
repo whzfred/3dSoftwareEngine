@@ -35,13 +35,26 @@ void render_object(Object* obj, int angle_x, int angle_y, int angle_z)
             continue;
         }
 
+        float ax = v1.x - v0.x;
+        float ay = v1.y - v0.y;
+
+        float bx = v2.x - v0.x;
+        float by = v2.y - v0.y;
+
+        float cross = ax * by - ay * bx;
+
+        if(cross < 0)
+        {
+            continue;
+        }
+
         // projection
         ScreenVertex sv0 = projection_project_vertex(v0);
         ScreenVertex sv1 = projection_project_vertex(v1);
         ScreenVertex sv2 = projection_project_vertex(v2);
 		
 		 // rasterization
-		rasterizer_draw_triangle_vertices(sv0, sv1, sv2);
+		rasterizer_draw_triangle(sv0, sv1, sv2);
     }
 }
 
@@ -59,5 +72,5 @@ void render_triangle()
     v2.x = 200;
     v2.y = 250;
 
-    rasterizer_draw_triangle_vertices(v0, v1, v2);
+    rasterizer_draw_triangle(v0, v1, v2);
 }

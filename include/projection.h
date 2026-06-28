@@ -7,6 +7,7 @@ typedef struct
 {
     int x;
     int y;
+    int light;
 } ScreenVertex;
 
 ScreenVertex projection_project_vertex(Vertex v);

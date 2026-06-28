@@ -13,6 +13,7 @@ PRIVATE
 	src/projection.c
 	src/camera.c
 	src/rasterizer.c
+	src/transform.c
 )
 
 target_include_directories(engine

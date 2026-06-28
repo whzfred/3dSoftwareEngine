@@ -7,7 +7,8 @@
 
 extern Uint32 pixels[WIDTH * HEIGHT];
 
-void render_object(Object* obj);
+void render_object(Object* obj, int angle_x, int angle_y, int angle_z);
+void render_triangle();
 
 static inline void render_put_pixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {

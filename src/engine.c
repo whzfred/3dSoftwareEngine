@@ -60,6 +60,7 @@ Object cube =
 int main(int argc, char* argv[])
 {
     fastmath_precalc_sin();
+    fastmath_precalc_cos();
 	engine_init();
 	engine_run();
 	engine_clean_up();
@@ -100,27 +101,42 @@ void engine_clean_up()
 
 void engine_run()
 {
-	int running = 1;
-	int time = 0;
-	int frames = 0;
-	Uint64 last_time = SDL_GetTicks();
-	
-	while (running) 
-	{
-		running = !handle_input();
-		render(time);
-		time++;
-		frames++;
-		
-	    Uint64 now = SDL_GetTicks();
-	
-		if (now - last_time >= 1000)
-		{
-			fps = frames;
-			frames = 0;
-			last_time = now;
-		}
-	}
+    int running = 1;
+    int time = 0;
+    int frames = 0;
+
+    Uint64 last_time = SDL_GetTicks();
+
+    const int target_fps = 60;
+    const int frame_delay = 1000 / target_fps;
+
+    while (running)
+    {
+        Uint64 frame_start = SDL_GetTicks();
+        running = !handle_input();
+
+        render(time);
+        time++;
+        frames++;
+
+        // FPS counter
+        Uint64 now = SDL_GetTicks();
+
+        if (now - last_time >= 1000)
+        {
+            fps = frames;
+            frames = 0;
+            last_time = now;
+        }
+
+        // Frame limiter
+        Uint64 frame_time = SDL_GetTicks() - frame_start;
+
+        if(frame_delay > frame_time)
+        {
+            SDL_Delay(frame_delay - frame_time);
+        }
+    }
 }
 
 int handle_input()
@@ -147,10 +163,18 @@ int handle_input()
 
 void render(int time)
 {
-	//render_plasma(time);
-	render_cube();
+    // clear pixel buffer
+    memset(pixels, 0, WIDTH * HEIGHT * sizeof(Uint32));
 
-    SDL_UpdateTexture(texture, NULL, pixels, WIDTH * sizeof(Uint32));
+    render_cube(time);
+    render_triangle();
+
+    SDL_UpdateTexture(
+        texture,
+        NULL,
+        pixels,
+        WIDTH * sizeof(Uint32)
+    );
 
     SDL_RenderClear(renderer);
     SDL_RenderTexture(renderer, texture, NULL, NULL);
@@ -171,9 +195,9 @@ void render_plasma(int time)
     }
 }
 
-void render_cube()
+void render_cube(int angle)
 {
-	render_object(&cube);
+	render_object(&cube, angle, angle, angle);
 }
 
 

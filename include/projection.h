@@ -3,6 +3,12 @@
 
 #include "vertex.h"
 
-void projection_project_vertex(Vertex v, int* x, int* y);
+typedef struct
+{
+    int x;
+    int y;
+} ScreenVertex;
+
+ScreenVertex projection_project_vertex(Vertex v);
 
 #endif

@@ -1,6 +1,7 @@
 #include "rasterizer.h"
 #include "render.h"
 #include <stdio.h>
+#include "fastmath.h"
 
 void rasterizer_draw_triangle_vertices(ScreenVertex v0, ScreenVertex v1, ScreenVertex v2)
 {
@@ -26,16 +27,8 @@ void rasterizer_draw_triangle(ScreenVertex v0, ScreenVertex v1, ScreenVertex v2)
     {
         rasterizer_swap_screen_vertex(&v1, &v2);
     }
-    
+   
     int light = (v0.light + v1.light + v2.light) / 3;
-
-    if(light < 0)
-        light = 0;
-
-    if(light > 255)
-        light = 255;
-
-    //printf("light %d", light);
 
     // Long edge: v0 -> v2
     float x02 = v0.x;

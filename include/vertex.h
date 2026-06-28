@@ -1,12 +1,11 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+#include "fastmath.h"
+
 typedef struct
 {
-    float x;
-    float y;
-    float z;
-
+    Vec3 pos;
 } Vertex;
 
 #endif

@@ -9,6 +9,16 @@ cmake -S . -B build
 cmake --build build
 ```
 
-## Screens
+## Features
 
-![Plasma](screens/plasma.png)
+Triangle rasterization
+
+Perspective projection
+
+Rotation
+
+Fixed Camera
+
+Flat shading
+
+Back face culling
